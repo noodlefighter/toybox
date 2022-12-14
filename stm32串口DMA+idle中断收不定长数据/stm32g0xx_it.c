@@ -210,42 +210,41 @@ void TIM14_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
 
 	uint32_t tmp_flag = 0;
     uint32_t temp;
-    
+
     HAL_UART_IRQHandler(&huart1);
     if(USART1 == huart1.Instance)
 	{
-        tmp_flag =__HAL_UART_GET_FLAG(&huart1,UART_FLAG_IDLE); //»ñÈ¡IDLE±êÖ¾Î»
-            
-        if((tmp_flag != RESET))//idle±êÖ¾±»ÖÃÎ»
-        { 
-            
-            __HAL_UART_CLEAR_IDLEFLAG(&huart1);//Çå³ý±êÖ¾Î»                     
- //           temp = UartHandle.Instance->SR;  //Çå³ý×´Ì¬¼Ä´æÆ÷SR,¶ÁÈ¡SR¼Ä´æÆ÷¿ÉÒÔÊµÏÖÇå³ýSR¼Ä´æÆ÷µÄ¹¦ÄÜ
-//            temp = UartHandle.Instance->DR; //¶ÁÈ¡Êý¾Ý¼Ä´æÆ÷ÖÐµÄÊý¾Ý
+        tmp_flag =__HAL_UART_GET_FLAG(&huart1,UART_FLAG_IDLE); //ï¿½ï¿½È¡IDLEï¿½ï¿½Ö¾Î»
+        // tmp_flag =__HAL_UART_GET_FLAG(&huart1,UART_FLAG_RTOF);
+        if((tmp_flag != RESET))//idleï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Î»
+        {
+          // __HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_RTOF);
+            __HAL_UART_CLEAR_IDLEFLAG(&huart1);//ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Î»
+ //           temp = UartHandle.Instance->SR;  //ï¿½ï¿½ï¿½×´Ì¬ï¿½Ä´ï¿½ï¿½ï¿½SR,ï¿½ï¿½È¡SRï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½SRï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½
+//            temp = UartHandle.Instance->DR; //ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ý¼Ä´ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½
 
-            HAL_UART_DMAStop(&huart1); //     
-            temp  =  __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);// »ñÈ¡DMAÖÐÎ´´«ÊäµÄÊý¾Ý¸öÊý    
-			
-			
-            Usart1RXCount =  RXBUFFERSIZE - temp; //×Ü¼ÆÊý¼õÈ¥Î´´«ÊäµÄÊý¾Ý¸öÊý£¬µÃµ½ÒÑ¾­½ÓÊÕµÄÊý¾Ý¸öÊý
-               
-			if(Usart1RXCount >= RXBUFFERSIZE)
+            HAL_UART_DMAStop(&huart1); //
+            temp  =  __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);// ï¿½ï¿½È¡DMAï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½
+
+
+            Usart1RXCount =  DEBUG_RX_MAX - temp; //ï¿½Ü¼ï¿½ï¿½ï¿½ï¿½ï¿½È¥Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½
+
+			if(Usart1RXCount >= DEBUG_RX_MAX)
 			{
-				Usart1RXCount = RXBUFFERSIZE - 1;
+				Usart1RXCount = DEBUG_RX_MAX - 1;
 			}
-			Usart1RXFlag = 1;  // ½ÓÊÜÍê³É±êÖ¾Î»ÖÃ1 
-			memcpy(USART1_RX_BUF, Usart1RxBuffer, Usart1RXCount); 
-            HAL_UART_Receive_DMA(&huart1,Usart1RxBuffer,RXBUFFERSIZE);//ÖØÐÂ´ò¿ªDMA½ÓÊÕ
+			Usart1RXFlag = 1;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½Ö¾Î»ï¿½ï¿½1
+			memcpy(USART1_RX_BUF, Usart1RxBuffer, Usart1RXCount);
+            HAL_UART_Receive_DMA(&huart1,Usart1RxBuffer,DEBUG_RX_MAX);//ï¿½ï¿½ï¿½Â´ï¿½DMAï¿½ï¿½ï¿½ï¿½
         }
     }
-	
+
   /* USER CODE END USART1_IRQn 1 */
 }
 
@@ -255,7 +254,6 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
@@ -265,26 +263,30 @@ void USART2_IRQHandler(void)
 
 	if(USART2 == huart2.Instance)
 	{
-		tmp_flag =__HAL_UART_GET_FLAG(&huart2,UART_FLAG_IDLE); //»ñÈ¡IDLE±êÖ¾Î»
-			
-		if((tmp_flag != RESET))//idle±êÖ¾±»ÖÃÎ»
-		{ 
-			
-			__HAL_UART_CLEAR_IDLEFLAG(&huart2);//Çå³ý±êÖ¾Î»                     
+    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_ORE) != RESET) {
+      __HAL_UART_CLEAR_OREFLAG(&huart2);
+      u1_printf("ore");
+    }
 
-			HAL_UART_DMAStop(&huart2); //     
-			temp  =  __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);// »ñÈ¡DMAÖÐÎ´´«ÊäµÄÊý¾Ý¸öÊý    
-			
-			
-			Usart2RXCount =  RXBUFFERSIZE - temp; //×Ü¼ÆÊý¼õÈ¥Î´´«ÊäµÄÊý¾Ý¸öÊý£¬µÃµ½ÒÑ¾­½ÓÊÕµÄÊý¾Ý¸öÊý
-			   
-			if(Usart2RXCount >= RXBUFFERSIZE)
+		tmp_flag =__HAL_UART_GET_FLAG(&huart2,UART_FLAG_IDLE); //ï¿½ï¿½È¡IDLEï¿½ï¿½Ö¾Î»
+
+		if((tmp_flag != RESET))//idleï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½Î»
+		{
+			__HAL_UART_CLEAR_IDLEFLAG(&huart2);//ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Î»
+
+			HAL_UART_DMAStop(&huart2); //
+			temp  =  __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);// ï¿½ï¿½È¡DMAï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½
+
+
+			Usart2RXCount =  CMD_RX_MAX - temp; //ï¿½Ü¼ï¿½ï¿½ï¿½ï¿½ï¿½È¥Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½
+
+			if(Usart2RXCount >= CMD_RX_MAX)
 			{
-				Usart2RXCount = RXBUFFERSIZE - 1;
+				Usart2RXCount = CMD_RX_MAX - 1;
 			}
-			Usart2RXFlag = 1;  // ½ÓÊÜÍê³É±êÖ¾Î»ÖÃ1 
-			memcpy(USART2_RX_BUF, Usart2RxBuffer, Usart2RXCount); 
-			HAL_UART_Receive_DMA(&huart2,Usart2RxBuffer,RXBUFFERSIZE);//ÖØÐÂ´ò¿ªDMA½ÓÊÕ
+			Usart2RXFlag = 1;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½Ö¾Î»ï¿½ï¿½1
+			memcpy(USART2_RX_BUF, Usart2RxBuffer, Usart2RXCount);
+			HAL_UART_Receive_DMA(&huart2,Usart2RxBuffer,CMD_RX_MAX);//ï¿½ï¿½ï¿½Â´ï¿½DMAï¿½ï¿½ï¿½ï¿½
 			memset(Usart2RxBuffer, 0, sizeof(Usart2RxBuffer));
 		}
 	}
